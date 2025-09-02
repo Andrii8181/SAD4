@@ -1,7 +1,12 @@
 from docx import Document
 from datetime import datetime
+import os
+import platform
+import subprocess
 
 def export_results_to_word(indicator, units, data, result):
+    filename = "Результати_аналізу.docx"
+
     doc = Document()
     doc.add_heading("SAD - Статистичний аналіз даних", level=0)
 
@@ -21,11 +26,24 @@ def export_results_to_word(indicator, units, data, result):
     doc.add_heading("Перевірка нормальності (Шапіро-Вілк)", level=1)
     doc.add_paragraph(f"W = {result['W']:.4f}, p = {result['p']:.4f}")
     if result["normal"]:
-        doc.add_paragraph("Дані відповідають нормальному розподілу (p > 0.05).")
+        doc.add_paragraph("✅ Дані відповідають нормальному розподілу (p > 0.05).")
     else:
-        doc.add_paragraph("Дані НЕ відповідають нормальному розподілу (p ≤ 0.05).")
+        doc.add_paragraph("⚠️ Дані НЕ відповідають нормальному розподілу (p ≤ 0.05).")
 
     # Дата аналізу
     doc.add_paragraph(f"\nДата виконання: {datetime.now().strftime('%d.%m.%Y %H:%M')}")
 
-    doc.save("Результати_аналізу.docx")
+    doc.save(filename)
+
+    # Автоматично відкриваємо файл
+    open_file(filename)
+
+
+def open_file(filepath):
+    """Відкриває файл після створення у Word / LibreOffice"""
+    if platform.system() == "Windows":
+        os.startfile(filepath)
+    elif platform.system() == "Darwin":  # macOS
+        subprocess.call(["open", filepath])
+    else:  # Linux
+        subprocess.call(["xdg-open", filepath])
