@@ -1,31 +1,31 @@
 from docx import Document
 from datetime import datetime
 
-def export_results(data, results):
+def export_results_to_word(indicator, units, data, result):
     doc = Document()
-    doc.add_heading("Перевірка на нормальність (Шапіро–Вілка)", 0)
+    doc.add_heading("SAD - Статистичний аналіз даних", level=0)
 
-    doc.add_paragraph(f"Дата аналізу: {datetime.now().strftime('%d.%m.%Y %H:%M')}")
-    doc.add_paragraph("Показник: (введіть назву)")
-    doc.add_paragraph("Одиниці виміру: (введіть одиниці)")
+    doc.add_paragraph(f"Назва показника: {indicator}")
+    doc.add_paragraph(f"Одиниці виміру: {units}")
 
-    doc.add_heading("Сирі дані", level=1)
-    table = doc.add_table(rows=len(data[0])+1, cols=len(data))
+    # Таблиця з початковими даними
+    doc.add_heading("Початкові дані", level=1)
+    table = doc.add_table(rows=1, cols=1)
     hdr_cells = table.rows[0].cells
-    for i in range(len(data)):
-        hdr_cells[i].text = f"Фактор {i+1}"
-    for row in range(len(data[0])):
-        cells = table.add_row().cells
-        for col in range(len(data)):
-            try:
-                cells[col].text = str(data[col][row])
-            except IndexError:
-                cells[col].text = ""
+    hdr_cells[0].text = "Значення"
+    for value in data:
+        row_cells = table.add_row().cells
+        row_cells[0].text = str(value)
 
-    doc.add_heading("Результати перевірки", level=1)
-    for res in results:
-        doc.add_paragraph(
-            f"{res['column']}: W={res['W']}, p={res['p']} → {res['result']}"
-        )
+    # Результати тесту
+    doc.add_heading("Перевірка нормальності (Шапіро-Вілк)", level=1)
+    doc.add_paragraph(f"W = {result['W']:.4f}, p = {result['p']:.4f}")
+    if result["normal"]:
+        doc.add_paragraph("Дані відповідають нормальному розподілу (p > 0.05).")
+    else:
+        doc.add_paragraph("Дані НЕ відповідають нормальному розподілу (p ≤ 0.05).")
+
+    # Дата аналізу
+    doc.add_paragraph(f"\nДата виконання: {datetime.now().strftime('%d.%m.%Y %H:%M')}")
 
     doc.save("Результати_аналізу.docx")
