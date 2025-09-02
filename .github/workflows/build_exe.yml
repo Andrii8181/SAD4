@@ -44,9 +44,16 @@ jobs:
           name: SAD-windows-exe
           path: ./dist
 
+      - name: Create Git tag
+        id: tag
+        run: |
+          TAG=v$(date +'%Y.%m.%d-%H%M')
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ steps.tag.outputs.tag }}
           files: ./dist/*.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
