@@ -1,0 +1,8 @@
+PyQt5==5.15.10
+pandas
+numpy
+scipy
+matplotlib
+seaborn
+openpyxl
+python-docx
