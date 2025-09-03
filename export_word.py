@@ -47,3 +47,4 @@ def open_file(filepath):
         subprocess.call(["open", filepath])
     else:  # Linux
         subprocess.call(["xdg-open", filepath])
+ 
