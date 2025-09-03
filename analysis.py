@@ -6,3 +6,4 @@ def check_normality(data):
     """
     W, p = shapiro(data)
     return {"W": W, "p": p, "normal": p > 0.05}
+ 
