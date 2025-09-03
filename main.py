@@ -1,6 +1,6 @@
 import sys
 from PyQt5.QtWidgets import (
-    QApplication, QMainWindow, QAction, QTableWidget, 
+    QApplication, QMainWindow, QAction, QTableWidget,
     QTableWidgetItem, QInputDialog, QMessageBox
 )
 from PyQt5.QtCore import Qt
@@ -18,6 +18,13 @@ class MainWindow(QMainWindow):
         self.table = QTableWidget(5, 5)
         self.table.setHorizontalHeaderLabels([f"Фактор {i+1}" for i in range(5)])
         self.setCentralWidget(self.table)
+
+        # Робимо всі клітинки редагованими
+        for i in range(self.table.rowCount()):
+            for j in range(self.table.columnCount()):
+                item = QTableWidgetItem("")
+                item.setFlags(item.flags() | Qt.ItemIsEditable)
+                self.table.setItem(i, j, item)
 
         # Меню
         menubar = self.menuBar()
@@ -64,6 +71,10 @@ class MainWindow(QMainWindow):
     def add_row(self):
         row = self.table.rowCount()
         self.table.insertRow(row)
+        for j in range(self.table.columnCount()):
+            item = QTableWidgetItem("")
+            item.setFlags(item.flags() | Qt.ItemIsEditable)
+            self.table.setItem(row, j, item)
 
     def delete_row(self):
         row = self.table.currentRow()
@@ -74,6 +85,10 @@ class MainWindow(QMainWindow):
         col = self.table.columnCount()
         self.table.insertColumn(col)
         self.table.setHorizontalHeaderItem(col, QTableWidgetItem(f"Фактор {col+1}"))
+        for i in range(self.table.rowCount()):
+            item = QTableWidgetItem("")
+            item.setFlags(item.flags() | Qt.ItemIsEditable)
+            self.table.setItem(i, col, item)
 
     def delete_col(self):
         col = self.table.currentColumn()
@@ -150,7 +165,7 @@ class MainWindow(QMainWindow):
     def show_about(self):
         QMessageBox.information(self, "Про програму",
                                 "SAD - Статистичний аналіз даних\n"
-                                "Розробник: ...\n"
+                                "Розробник: ....\n"
                                 "Кафедра плодівництва і виноградарства УНУ")
 
 
